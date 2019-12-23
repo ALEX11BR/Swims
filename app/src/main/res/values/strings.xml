@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Swims</string>
+    <string name="title_activity_db">DBActivity</string>
+</resources>
