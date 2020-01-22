@@ -7,35 +7,37 @@
     tools:context=".MainActivity">
 
     <Button
+            android:id="@+id/toStudentListBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="toStudentListActivity"
+            android:text="Listă de elevi"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" android:drawableLeft="@drawable/ic_person"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
         android:id="@+id/toScanBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="64dp"
+        android:drawableLeft="@drawable/ic_pages"
         android:onClick="toScanActivity"
         android:text="Scanează"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/generateBtn" />
 
     <Button
-        android:id="@+id/toDBViewBtn"
+        android:id="@+id/generateBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="64dp"
-        android:onClick="toDBActivity"
-        android:text="Bază de date"
+        android:drawableLeft="@drawable/ic_gen_students_24dp"
+        android:onClick="toGenerateStudentsActivity"
+        android:text=" Generează"
         app:layout_constraintBottom_toTopOf="@+id/toScanBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageView
-        android:id="@+id/logoView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/toDBViewBtn"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/drawing" />
+        app:layout_constraintTop_toBottomOf="@+id/toStudentListBtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

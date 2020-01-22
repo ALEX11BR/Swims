@@ -7,24 +7,29 @@
     android:layout_height="match_parent"
     tools:context=".NewStudentActivity">
 
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/noticeView" app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="24dp" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" android:text="Am detectat... Dar ce am detectat eu oare?"/>
     <EditText
-        android:id="@+id/studentName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:ems="10"
-        android:hint="Introduceți numele elevului"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/infoView"
-        app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/studentName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:ems="10"
+            android:hint="Introduceți numele elevului"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/noticeView"/>
 
     <TextView
-        android:id="@+id/infoView"
+        android:id="@+id/studentsInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Numele elevului va fi convertit automat în majuscule, iar orice caracter ce nu e o literă va fi înlocuit cu un spațiu. Nu se pot introduce nume goale. Dacă numele nu încape în spațiul delimitat există riscul ca el să nu poată încăpea pe legitimația ce se va genera automat, iar astfel elevul nu va fi generat în baza de date."
+        android:layout_marginTop="24dp"
+        android:text="Numele elevului va fi convertit automat în majuscule, iar orice caracter ce nu e o literă va fi înlocuit cu un spațiu.\nNu se pot introduce nume goale sau care nu încep în literă."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"

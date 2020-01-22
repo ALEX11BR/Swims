@@ -1,12 +1,59 @@
 package ro.alexpopa.swims;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-//contine functii care ajut la afisarea informatiilor legate de datele scanarilor, respectiv de numarul de sedinte ramase, intr-un mod elegant
+//contine functii care ajut la afisarea informatiilor legate de datele scanarilor, respectiv de numarul de elevi generati si inregistrati si de sedinte ramase si de adaugat, intr-un mod elegant
 //functiile sunt statice, ca sa nu fie nevoie de a crea o instanta a clasei ca sa le putem folosi
 public class InfoStrings {
+    public static String barcodeGenText (int Barcodes) {
+        if (Barcodes == 1) {
+            return "un cod de bare";
+        }
+        else {
+            return Barcodes + " coduri de bare";
+        }
+    }
+    //aici generam textul pentru aratarea numarului de elevi generati, plus cel de inregistrati, alaturi de lista acestora
+    public static String generatedStudentsInfo (int GeneratedStudents, int ActualStudents, ArrayList<String> GeneratedStudentsList, ArrayList<String> ActualStudentsList) {
+        String reg;
+        switch (GeneratedStudents) {
+            case 0:
+                return "Nu au fost generați elevi.";
+            case 1:
+                reg = (ActualStudents == 0) ? "nu" : "";
+                return "A fost generat un singur elev, care " + reg + "este înregistrat:\n" + GeneratedStudentsList.get(0);
+            default:
+                switch (ActualStudents) {
+                    case 0:
+                        reg = "niciunul nefiind înregistrat:";
+                        break;
+                    case 1:
+                        reg = "din care unul e înregistrat:";
+                        break;
+                    default:
+                        reg = "din care " + ActualStudents + " sunt înregistrați:";
+                }
+                reg = "Au fost generați " + GeneratedStudents + " elevi, " + reg;
+                for (int i = 0; i < GeneratedStudentsList.size(); i++) {
+                    reg = reg + "\n" + GeneratedStudentsList.get(i);
+                    if (ActualStudentsList.contains(GeneratedStudentsList.get(i))) {
+                        reg = reg + " - înregistrat";
+                    }
+                }
+                return reg;
+        }
+    }
+    public static String addCreditText (int Credit) {
+        if (Credit == 1) {
+            return "o ședință";
+        }
+        else {
+            return + Credit + " ședințe";
+        }
+    }
     //returneaza o propozitie care arata frumos cate sedinte ramase mai sunt, pentru activitatea baza de date si cea elev
     public static String creditInfo (int Credit) {
         switch (Credit) {
@@ -19,7 +66,7 @@ public class InfoStrings {
         }
     }
     //returneaza o propozitie care arata data ultimei scanari (data in format unix pe milisecunde), sau lipsa acesteia pentru val. 0; luna e aratata numeric
-    public  static String lastTimeInfo (long LastTime) {
+    public static String lastTimeInfo (long LastTime) {
         if (LastTime == 0) {
             return "Elevul nu a mai fost scanat până acum.";
         }

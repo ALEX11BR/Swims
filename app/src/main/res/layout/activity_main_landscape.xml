@@ -15,17 +15,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toDBViewBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/toStudentListBtn" />
 
     <Button
-        android:id="@+id/toDBViewBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="toDBActivity"
-        android:text="Bază de date"
-        app:layout_constraintBottom_toTopOf="@+id/toScanBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            android:id="@+id/toStudentListBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="toStudentListActivity"
+            android:text="Listă de elevi"
+            app:layout_constraintBottom_toTopOf="@+id/toScanBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

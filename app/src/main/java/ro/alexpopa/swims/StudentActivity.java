@@ -2,13 +2,17 @@ package ro.alexpopa.swims;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Date;
@@ -16,15 +20,42 @@ import java.util.Objects;
 
 public class StudentActivity extends AppCompatActivity {
 
-    int credit; String barcode, name, scans;
+    int credit, creditToAdd = 1; String barcode, name, scans; boolean status = false;
     SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
+        TextView creditAddView = (TextView) findViewById(R.id.addCreditField);
+        final Button addCreditBtn = (Button) findViewById(R.id.creditAddBtn);
+        creditAddView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) { //daca sirul nu e gol (lungime > 0), putem sa-i luam numarul
+                    creditToAdd = Integer.parseInt(s.toString());
+                }
+                else {
+                    creditToAdd = 1;
+                }
+                if (creditToAdd < 1) {
+                    creditToAdd = 1;
+                }
+                addCreditBtn.setText("Adăugare " + InfoStrings.addCreditText(creditToAdd));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         Objects.requireNonNull(getSupportActionBar()).setTitle("Elev");
-        if (getIntent().getExtras() == null) { //dacă n-avem extra-uri, ne cărăm de aici, căci nu putem face nimic
+        if (getIntent().getExtras() == null) { //dacă n-avem extra-uri, ne cărăm de aici, căci nu putem face nimic, altfel ne putem alege cu erori
             finish();
         }
         db = SQLiteDatabase.openOrCreateDatabase(this.getDatabasePath("evidenta"), null);
@@ -34,20 +65,23 @@ public class StudentActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Button btn = (Button) findViewById(R.id.recordBtn);
-        TextView nameView = (TextView) findViewById(R.id.nameView), idView = (TextView) findViewById(R.id.idView), infoView = (TextView) findViewById(R.id.infoView), logView = (TextView) findViewById(R.id.logView);
-        Cursor cursor = db.rawQuery("SELECT * FROM evidenta WHERE CodDeBare=" + barcode, null);
-        if (!cursor.moveToFirst()) { //daca cursorul e gol, nu e nimeni cu codul scanat, deci lasam ecranul initial, dar ascundem butoanele + textul cu datile scanarilor
-            btn.setVisibility(View.GONE);
-            btn = (Button) findViewById(R.id.deleteStudentBtn);
-            btn.setVisibility(View.GONE);
-            btn = (Button) findViewById(R.id.creditAddBtn);
-            btn.setVisibility(View.GONE);
-            logView.setVisibility(View.GONE);
-            return; //altfel se continua cu instructiunile de mai jos, aparand imediat crash-uri de la apelare de elemente din cursor inexistente
+        TextView nameView = (TextView) findViewById(R.id.nameView), idView = (TextView) findViewById(R.id.idView), infoView = (TextView) findViewById(R.id.studentsInfo), logView = (TextView) findViewById(R.id.logView);
+        Cursor cursor = db.rawQuery("SELECT * FROM evidenta WHERE CodDeBare=" + barcode, null); //reimprospatam cursorul la fiecare Resume
+        if (!cursor.moveToFirst()) { //daca cursorul e gol, nu e nimeni inregistrat cu codul scanat, deci trimitem la activitatea de creare elev nou
+            if (status) { //daca am mai fost in aceasta activitate cu un cursor gol, e cazul sa ne intoarcem la cea precedenta (de scanare)
+                finish();
+            }
+            else { //daca nu am mai fost aici, iar cursorul e gol, e timpul sa trimitem utilizatorul la activitatea de creare elev, cu codul de bare corespunzător
+                status = true;
+                Intent newStudentIntent = new Intent(this, NewStudentActivity.class);
+                newStudentIntent.putExtra("barcode", barcode);
+                startActivity(newStudentIntent);
+            }
+            return; //altfel codul de mai jos va fi executat si va genera erori urate
         }
         name = cursor.getString(0);
         nameView.setText(name); //numele elevului
-        idView.setText(String.valueOf(barcode));
+        idView.setText(barcode);
         credit = cursor.getInt(3);
         if (credit <= 0) {
             btn.setVisibility(View.GONE);
@@ -67,11 +101,11 @@ public class StudentActivity extends AppCompatActivity {
     }
     public void addCredit (View view) {
         new AlertDialog.Builder(this)
-        .setMessage("Sunteți pe cale să adăugați 10 ședințe elevului " + name + ". Sunteți de acord?")
+        .setMessage("Sunteți pe cale să adăugați " + InfoStrings.addCreditText(creditToAdd) + " elevului " + name + ". Sunteți de acord?")
         .setPositiveButton("Da", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                credit = credit + 10;
+                credit = credit + creditToAdd;
                 db.execSQL("UPDATE evidenta SET Credit = " + credit + " WHERE CodDeBare = " + barcode);
                 onResume();
             }
@@ -109,5 +143,11 @@ public class StudentActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Nu", null)
                 .show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        finish();
     }
 }
