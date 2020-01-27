@@ -1,7 +1,6 @@
 package ro.alexpopa.swims;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -16,34 +15,27 @@ public class InfoStrings {
             return Barcodes + " coduri de bare";
         }
     }
-    //aici generam textul pentru aratarea numarului de elevi generati, plus cel de inregistrati, alaturi de lista acestora
-    public static String generatedStudentsInfo (int GeneratedStudents, int ActualStudents, ArrayList<String> GeneratedStudentsList, ArrayList<String> ActualStudentsList) {
+    //aici generam textul pentru aratarea numarului de elevi generati, plus cel de inregistrati
+    public static String generatedStudentsInfo (int GeneratedStudents, int ActualStudents) {
         String reg;
         switch (GeneratedStudents) {
             case 0:
                 return "Nu au fost generați elevi.";
             case 1:
                 reg = (ActualStudents == 0) ? "nu" : "";
-                return "A fost generat un singur elev, care " + reg + "este înregistrat:\n" + GeneratedStudentsList.get(0);
+                return "A fost generat un singur elev, care " + reg + "este înregistrat.";
             default:
                 switch (ActualStudents) {
                     case 0:
-                        reg = "niciunul nefiind înregistrat:";
+                        reg = "niciunul nefiind înregistrat.";
                         break;
                     case 1:
-                        reg = "din care unul e înregistrat:";
+                        reg = "din care unul e înregistrat.";
                         break;
                     default:
-                        reg = "din care " + ActualStudents + " sunt înregistrați:";
+                        reg = "din care " + ActualStudents + " sunt înregistrați.";
                 }
-                reg = "Au fost generați " + GeneratedStudents + " elevi, " + reg;
-                for (int i = 0; i < GeneratedStudentsList.size(); i++) {
-                    reg = reg + "\n" + GeneratedStudentsList.get(i);
-                    if (ActualStudentsList.contains(GeneratedStudentsList.get(i))) {
-                        reg = reg + " - înregistrat";
-                    }
-                }
-                return reg;
+                return "Au fost generați " + GeneratedStudents + " elevi, " + reg;
         }
     }
     public static String addCreditText (int Credit) {
@@ -79,6 +71,10 @@ public class InfoStrings {
     public static String timeInfo (long Time) {
         Date date = new Date(Time);
         SimpleDateFormat df = new SimpleDateFormat("d MMMM yyyy, H:mm", Locale.getDefault());
+        return  df.format(date);
+    }
+    public static String timeForDirName (Date date) {
+        SimpleDateFormat df = new SimpleDateFormat("dMMMMyyyy_H:mm:ss", Locale.getDefault());
         return  df.format(date);
     }
 }

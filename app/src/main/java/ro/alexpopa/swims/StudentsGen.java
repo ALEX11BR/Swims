@@ -2,15 +2,22 @@ package ro.alexpopa.swims;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -19,8 +26,6 @@ import com.google.zxing.common.BitMatrix;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.sql.Time;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
@@ -89,10 +94,10 @@ public class StudentsGen extends AppCompatActivity {
     public static int newBarcode () {
         int result=0, check=0;
         for (int i = 1; i <= 7; i++) {
-            int d = new Random().nextInt(10);
-            while (i==1 && d==0) { //nu vreau ca prima cifra sa fie zero
-                d = new Random().nextInt();
-            }
+            int d;
+            do {
+                d = new Random().nextInt(10);
+            } while (i==1 && d==0); //nu vreau ca prima cifra sa fie zero
             result = result*10 + d;
             if (i%2==1) {
                 check += 3 * d;
@@ -104,6 +109,7 @@ public class StudentsGen extends AppCompatActivity {
     }
 
     int toGen = 1;
+    boolean generating = false;
     SQLiteDatabase db;
     Cursor cursor;
 
@@ -146,57 +152,89 @@ public class StudentsGen extends AppCompatActivity {
     protected void onResume () {
         super.onResume();
         TextView studentsGenerationInfo = (TextView) findViewById(R.id.studentsList);
-        ArrayList<String> generatedStudentsList = new ArrayList<String>(), actualStudentsList = new ArrayList<String>();
         int generatedStudents, actualStudents;
         cursor = db.rawQuery("SELECT * FROM genlog", null);
         generatedStudents = cursor.getCount();
-        while (cursor.moveToNext()) {
-            generatedStudentsList.add(cursor.getString(0));
-        }
         cursor = db.rawQuery("SELECT * FROM evidenta", null);
         actualStudents = cursor.getCount();
-        while (cursor.moveToNext()) {
-            actualStudentsList.add(cursor.getString(1));
-        }
         cursor.close();
-        studentsGenerationInfo.setText(InfoStrings.generatedStudentsInfo(generatedStudents, actualStudents, generatedStudentsList, actualStudentsList));
+        studentsGenerationInfo.setText(InfoStrings.generatedStudentsInfo(generatedStudents, actualStudents));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (generating) {
+            Toast.makeText(this, "La sfârșitul generării veți reveni automat la meniul principal.", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            finish();
+        }
+    }
+    //pentru a genera mai multe coduri de bare afisand simultan progresul generarii ne folosim de aceasta clasa
+    class GenStudents extends AsyncTask<Void, Integer, Void> {
+        TextView progressText = (TextView) findViewById(R.id.progressText);
+        @Override
+        protected void onPreExecute() {
+            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+            progressBar.setVisibility(View.VISIBLE);
+            Button button = (Button) findViewById(R.id.genStudentsBtn);
+            button.setEnabled(false); //odata ce incepe generarea, nu mai permite inceperea uneia noi
+            progressText.setVisibility(View.VISIBLE);
+            progressText.setText("0/" + toGen); //incepem cu 0 din totalul de generat, evoluam pe parcurs
+        }
+        protected Void doInBackground(Void... voids) {
+            File genDir = new File(getExternalFilesDir(null), InfoStrings.timeForDirName(new Date()));
+            genDir.mkdirs(); //imaginile vor fi generate intr-un director cu data si ora generarii din folderul aplicatiei, pe care avem grija sa il generam
+            Bitmap bmp0 = BitmapFactory.decodeResource(getResources(), R.drawable.base);
+            Paint paint = new Paint(); //necesar pentru adaugarea textului cu codul de bare
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(0xFF000000); //negru opac
+            //paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD)); //facem textul aldin (bold)
+            paint.setTextSize(25); //punem sub codul de bare valoarea acestuia, cu un font mai mic, si centrat, neaparat
+            for (int i = 1; i <= toGen; i++) {
+                String barcode;
+                do {
+                    barcode = String.valueOf(newBarcode());
+                    cursor = db.rawQuery("SELECT * FROM genlog WHERE CodDeBare=" + barcode, null);
+                }
+                while (cursor.getCount() > 0);
+                cursor.close();
+                Bitmap bmp = bmp0.copy(Bitmap.Config.ARGB_8888, true); // bitmap-ul initial nu poate fi editat, ii facem o copie ce se poate edita
+                Canvas canvas = new Canvas(bmp); // cu ajutorul canvasului imbinam bitmapul cu baza legitimatiei (cel de mai sus) cu cel ce va contine codul de bare generat + scriem nr. codului de bare
+                float ltext = paint.measureText(barcode);
+                canvas.drawText(barcode, (1305 - ltext) / 2, 590, paint); //punem textul cu numarul codului de bare la mijlocul acestuia
+                try {
+                    Bitmap bmp1 = genCodDeBare(barcode, 585, 270);
+                    canvas.drawBitmap(bmp1, 360, 290, null);
+                } catch (WriterException e) {
+                    e.printStackTrace();
+                }
+                File picfile = new File(genDir, barcode + ".png");
+                try {
+                    FileOutputStream fos = new FileOutputStream(picfile);
+                    bmp.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                    fos.flush();
+                    fos.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                db.execSQL("INSERT INTO genlog VALUES (" + barcode + ")");
+                publishProgress(i);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            progressText.setText(values[0] + "/" + toGen);
+        }
+
+        protected void onPostExecute(Void v) {
+            finish();
+        }
     }
     public void genStudents(View view) {
-        Bitmap bmp0 = BitmapFactory.decodeResource(getResources(), R.drawable.base);
-        Paint paint = new Paint(); //necesar pentru adaugarea textului cu codul de bare
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(0xFF000000); //negru opac
-        //paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD)); //facem textul aldin (bold)
-        paint.setTextSize(25); //punem sub codul de bare valoarea acestuia, cu un font mai mic, si centrat, neaparat
-        for (int i = 1; i <= toGen; i++) {
-            String barcode;
-            do {
-                barcode = String.valueOf(newBarcode());
-                cursor = db.rawQuery("SELECT * FROM genlog WHERE CodDeBare=" + barcode, null);
-            }
-            while (cursor.getCount() > 0);
-            cursor.close();
-            Bitmap bmp = bmp0.copy(Bitmap.Config.ARGB_8888, true); // bitmap-ul initial nu poate fi editat, ii facem o copie ce se poate edita
-            Canvas canvas = new Canvas(bmp); // cu ajutorul canvasului imbinam bitmapul cu baza legitimatiei (cel de mai sus) cu cel ce va contine codul de bare generat + scriem nr. codului de bare
-            float ltext = paint.measureText(barcode);
-            canvas.drawText(barcode, (1305 - ltext) / 2, 590, paint); //punem textul cu numarul codului de bare la mijlocul acestuia
-            try {
-                Bitmap bmp1 = genCodDeBare(barcode, 585, 270);
-                canvas.drawBitmap(bmp1, 360, 290, null);
-            } catch (WriterException e) {
-                e.printStackTrace();
-            }
-            File picfile = new File(getExternalFilesDir(null), barcode + ".png"); // salvam fara probleme in folderul dedicat aplicatiei
-            try {
-                FileOutputStream fos = new FileOutputStream(picfile);
-                bmp.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                fos.flush();
-                fos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            db.execSQL("INSERT INTO genlog VALUES (" + barcode + ")");
-        }
-        finish();
+        generating = true;
+        new GenStudents().execute();
     }
 }

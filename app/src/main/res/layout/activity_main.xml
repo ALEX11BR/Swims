@@ -7,14 +7,16 @@
     tools:context=".MainActivity">
 
     <Button
-            android:id="@+id/toStudentListBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="toStudentListActivity"
-            android:text="Listă de elevi"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" android:drawableLeft="@drawable/ic_person"
-            app:layout_constraintTop_toTopOf="parent"/>
+        android:id="@+id/toStudentListBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_person"
+        android:onClick="toStudentListActivity"
+        android:text="Listă de elevi"
+        app:layout_constraintBottom_toTopOf="@+id/generateBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/toScanBtn"
