@@ -43,7 +43,7 @@ public class ScanActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Se scanează..."); //ascundem bara de titlu a aplicatiei, lucru ce necesita sa nu rezulte null ca altfel se pot intampla lucruri ciudate
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Se scanează...");
         setContentView(R.layout.activity_scan);
         textInfo = (TextView) findViewById(R.id.textView);
         cameraSurface = (SurfaceView) findViewById(R.id.cameraSurface);
