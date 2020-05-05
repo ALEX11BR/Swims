@@ -38,7 +38,7 @@ public class StudentListActivity extends AppCompatActivity {
     ArrayList<Student> students;
     SQLiteDatabase db;
 
-    //aceast adapter a fost pus in cadrul clasei activitate caci la apasarea unui card trebuie sa trimitem utilizatorul la activitatea specifica elevului din card, lucru care la "startActivity" nu mergea altfel decat pus aici in clasa activitatii
+    //acest adapter a fost pus in cadrul clasei activitate caci la apasarea unui card trebuie sa trimitem utilizatorul la activitatea specifica elevului din card, lucru care la "startActivity" nu mergea altfel decat pus aici in clasa activitatii
     public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewHolder> {
         private ArrayList<Student> students, allStudents;
         public class RecyclerViewHolder extends RecyclerView.ViewHolder {
@@ -103,6 +103,7 @@ public class StudentListActivity extends AppCompatActivity {
         MenuItem searchItem = menu.findItem(R.id.studentSearch);
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setQueryHint("Căutați după nume sau cod de bare"); //din varii motive nu merge setat in xml
+        searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

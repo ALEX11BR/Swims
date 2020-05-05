@@ -54,7 +54,6 @@ public class StudentActivity extends AppCompatActivity {
 
             }
         });
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Elev");
         if (getIntent().getExtras() == null) { //dacă n-avem extra-uri, ne cărăm de aici, căci nu putem face nimic, altfel ne putem alege cu erori
             finish();
         }
@@ -80,6 +79,7 @@ public class StudentActivity extends AppCompatActivity {
             return; //altfel codul de mai jos va fi executat si va genera erori urate
         }
         name = cursor.getString(0);
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Elevul " + name);
         nameView.setText(name); //numele elevului
         idView.setText(barcode);
         credit = cursor.getInt(3);

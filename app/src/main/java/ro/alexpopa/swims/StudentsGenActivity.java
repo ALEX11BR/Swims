@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
-public class StudentsGen extends AppCompatActivity {
+public class StudentsGenActivity extends AppCompatActivity {
 
     /**************************************************************
      * dupa com.google.zxing.client.android.encode.QRCodeEncoder

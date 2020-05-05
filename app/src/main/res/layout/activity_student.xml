@@ -59,7 +59,7 @@
                     android:id="@+id/addCreditField" app:layout_constraintTop_toBottomOf="@+id/studentsInfo"
                     app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="16dp"
-                    android:hint="Introdu numărul de ședințe de adăugat (altfel adaug 1)" android:textSize="14sp"/>
+                    android:hint="Introdu numărul de ședințe de adăugat" android:maxLength="6"/>
             <Button
                     android:id="@+id/creditAddBtn"
                     android:layout_width="wrap_content"

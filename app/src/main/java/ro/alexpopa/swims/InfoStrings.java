@@ -20,9 +20,9 @@ public class InfoStrings {
         String reg;
         switch (GeneratedStudents) {
             case 0:
-                return "Nu au fost generați elevi.";
+                return "Nu au fost generați elevi până acum.";
             case 1:
-                reg = (ActualStudents == 0) ? "nu" : "";
+                reg = (ActualStudents == 0) ? "nu " : "";
                 return "A fost generat un singur elev, care " + reg + "este înregistrat.";
             default:
                 switch (ActualStudents) {
@@ -77,4 +77,5 @@ public class InfoStrings {
         SimpleDateFormat df = new SimpleDateFormat("dMMMMyyyy_H:mm:ss", Locale.getDefault());
         return  df.format(date);
     }
+    public static String appVersion = "PRE-3";
 }

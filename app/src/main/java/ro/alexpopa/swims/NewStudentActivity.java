@@ -78,40 +78,7 @@ public class NewStudentActivity extends AppCompatActivity {
             }
         });
     }
-    public void createStudent (View view) {/*
-        Bitmap bmp0 = BitmapFactory.decodeResource(getResources(), R.drawable.base);
-        Bitmap bmp = bmp0.copy(Bitmap.Config.ARGB_8888, true); // bitmap-ul initial nu poate fi editat, ii facem o copie ce se poate edita
-        Canvas canvas = new Canvas(bmp); // cu ajutorul canvasului imbinam bitmapul cu baza legitimatiei (cel de mai sus) cu cel ce va contine codul de bare generat
-        Paint paint = new Paint(); //necesar pentru adaugarea textului cu numele elevului
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(0xFF000000); //negru opac
-        int textSize = 56;
-        paint.setTextSize(textSize);
-        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD)); //facem textul aldin (bold)
-        float ltext = paint.measureText(name);
-        while (ltext>580) { //daca textul depaseste o anumita latime de siguranta ii reducem marimea fontului pana cand nu o mai depaseste
-            textSize--;
-            paint.setTextSize(textSize);
-            ltext = paint.measureText(name);
-        }
-        canvas.drawText(name,(1305-ltext)/2, 250, paint);
-        paint.setTextSize(25); //punem sub codul de bare valoarea acestuia, cu un font mai mic, si centrat, neaparat
-        ltext = paint.measureText(barcode);
-        canvas.drawText(barcode,(1305-ltext)/2, 590, paint);
-        try {
-            Bitmap bmp1 = genCodDeBare(barcode, 585, 270);
-            canvas.drawBitmap(bmp1, 360, 290, null);
-        } catch (WriterException e) {
-            e.printStackTrace();
-        }
-        File picfile = new File(getExternalFilesDir(null), barcode + ".png"); // salvam fara probleme in folderul dedicat aplicatiei
-        try {
-            FileOutputStream fos = new FileOutputStream(picfile);
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            fos.flush(); fos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
+    public void createStudent (View view) {
         db.execSQL("INSERT INTO evidenta VALUES ('" + name + "', " + barcode + ", 0, 0)"); //introducem elevul cu codul de bare si numele date, fara sedinte si cu valoare 0 de istoric gol
         finish();
     }

@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".StudentsGen">
+        tools:context=".StudentsGenActivity">
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -21,22 +21,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Aici puteți genera coduri de bare cu legitimațiile aferente, pe care ulterior să le aibă elevii dvs."
+                android:text="Aici puteți genera coduri de bare cu legitimațiile aferente, pe care ulterior să le aibă elevii dvs. Dacă câmpul este gol, atunci se va genera unul singur. Nu se pot introduce mai mult de 6 cifre."
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/studentsToGenField"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:ems="10"
-                android:hint="Introduceți numărul de coduri de bare de generat (altfel generez 1)"
-                android:inputType="number"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/studentsInfo" />
+                    android:id="@+id/studentsToGenField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:ems="10"
+                    android:hint="Introduceți numărul de coduri de bare de generat"
+                    android:inputType="number"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/studentsInfo" android:maxLength="6"/>
 
             <Button
                 android:id="@+id/genStudentsBtn"

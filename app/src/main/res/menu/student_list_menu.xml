@@ -5,6 +5,5 @@
             android:id="@+id/studentSearch"
             android:icon="@android:drawable/ic_menu_search"
             android:title="Căutare" app:actionViewClass="android.widget.SearchView"
-            app:showAsAction="always"
-    />
+            app:showAsAction="always|never"/>
 </menu>
